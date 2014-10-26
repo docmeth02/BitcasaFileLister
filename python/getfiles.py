@@ -1,4 +1,5 @@
 from bitcasa import BitcasaClient, BitcasaFolder, BitcasaFile
+from bitcasa.exception import BitcasaException
 from traceback import format_exc
 import threading, time, os, errno, sys, shutil, math
 import argparse, wget, urllib, uuid
@@ -100,7 +101,14 @@ class BitcasaDownload:
         log.debug("Dest path %s" % fulldest)
         log.debug("Tmp path %s" % fulltmp)
         if isinstance(fold, BitcasaFolder):
-            total = len(fold.items)
+            total = None
+            while total is None:
+                try:
+                    total = len(fold.items)  # first access of the item property will trigger api call
+                except (BitcasaException, ValueError) as e:
+                    log.error('Bitcasa Exception: %s. Retrying' % e)
+                except KeyboardInterrupt:
+                    raise SystemExit
             cnti=0
             for item in fold.items:
                 if self.end:
@@ -178,8 +186,14 @@ class BitcasaDownload:
         global log
         bc = BitcasaClient("758ab3de", "5669c999ac340185a7c80c28d12a4319","https://rose-llc.com/bitcasafilelist/", self.at)
         log.debug("Getting base folder")
-        base = bc.get_folder(self.baseFolder)
-
+        base = None
+        while base is None:
+            try:
+                base = bc.get_folder(self.baseFolder)
+            except (BitcasaException, ValueError) as e:
+                log.error("Bitcasa API Exception: %s. Retrying" % e)
+            except KeyboardInterrupt:
+                raise SystemExit
         #initialize logfiles
         try:
             if not os.path.isdir(self.tmp):
