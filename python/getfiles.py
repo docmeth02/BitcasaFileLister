@@ -5,6 +5,9 @@ import logger
 BASE_URL = "https://developer.api.bitcasa.com/v1/files/"
 log = None
 
+def null_bar(current, total, width=80):
+    return ''
+
 def convertSize(size):
     if size <= 0:
         return '0B'
@@ -64,7 +67,7 @@ class BitcasaDownload:
             tmppath = os.path.join(fulltmp,item.name)
             log.debug("Thread [%s]: %s" % (tthdnum, apidownloaduri))
             log.debug("Thread [%s]: Downloading file to %s" % (tthdnum, tmppath))
-            wget.download(apidownloaduri,out=tmppath)
+            wget.download(apidownloaduri, out=tmppath, bar=null_bar)
             log.debug("Thread [%s]: Download finished." % tthdnum)
             if not self.prt.end:
                 self.prt.bytestotal+=szb
