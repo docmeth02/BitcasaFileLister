@@ -71,13 +71,27 @@ class BitcasaDownload:
                 log.debug("Thread [%s]: %s" % (tthdnum, apidownloaduri))
                 log.debug("Thread [%s]: Downloading file to %s" % (tthdnum, tmppath))
                 try:
+                    bytesRead = 0
+                    lastBytesRead = bytesRead
+                    timer = time.time() + 10
+
                     req = requests.get(apidownloaduri, stream=True)
                     with open(tmppath, 'wb') as tmpfile:
                         for chunk in req.iter_content(chunk_size=1024):
                             if chunk: # filter out keep-alive new chunks
+                                bytesRead += len(chunk)
                                 tmpfile.write(chunk)
                                 tmpfile.flush()
-                except:
+                                if timer <= time.time():
+                                    # log status
+                                    progress = float(100 * bytesRead) / int(item.size)
+                                    bps = ((bytesRead - lastBytesRead) / 10) / 1024
+                                    log.debug("%s | %.2f%%@%s kbps" % (item.name, progress, bps))
+                                    lastBytesRead = bytesRead
+                                    timer = time.time() + 10
+
+                except Exception as e:
+                    print "Err: %s" % format_exc()
                     log.error("Thread [%s]: error downloading %s via wget" % (tthdnum, item.name))
                     raise
 
@@ -117,7 +131,7 @@ class BitcasaDownload:
                 except OSError:
                     log.warn("Thread [%s]: Couldn't clean up file %s" % (tthdnum, destpath))
 
-                log.error("Thread [%s]: Download failed %s\n%s" % (tthdnum, tmppath, rune.strerror))
+                log.error("Thread [%s]: Download failed %s\n%s" % (tthdnum, tmppath, rune))
 
             self.prt.numthreads -= 1
 
