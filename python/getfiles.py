@@ -1,4 +1,5 @@
 from bitcasa import BitcasaClient, BitcasaFolder, BitcasaFile
+from traceback import format_exc
 import threading, time, os, errno, sys, shutil, math
 import argparse, wget, urllib, uuid
 import logger
@@ -140,7 +141,7 @@ class BitcasaDownload:
                         myFile.close()
 
                 except Exception as e:
-                    log.error("Thread [%s]: Error processing file %s\n%s" % (tthdnum, nm, e.strerror))
+                    log.error("Thread [%s]: Error processing file %s\n%s" % (tthdnum, nm, format_exc()))
                     with open(os.path.join(self.tmp, 'errorfiles.txt'), 'a') as myFile:
                         myFile.write("%s%s %s\r\n" % (fulldest, nm, pt))
             #Randomly log progress and speed statistics
