@@ -60,47 +60,30 @@ class BitcasaDownload:
                         os.makedirs(fulldest)
                 except OSError as exc:
                     pass
-            try:
-                destpath = os.path.join(fulldest,item.name)
-                tmppath = os.path.join(fulltmp,item.name)
-                log.debug("Thread [%s]: %s" % (tthdnum, apidownloaduri))
-                log.debug("Thread [%s]: Downloading file to %s" % (tthdnum, tmppath))
-                wget.download(apidownloaduri,out=tmppath)
-                log.debug("Thread [%s]: Download finished." % tthdnum)
-                if not self.prt.end:
-                    self.prt.bytestotal+=szb
-                    log.debug("Thread [%s]: %s downloaded at %s" % (tthdnum, sz, getSpeed(szb,(time.time()-st))))
-                    log.debug("Thread [%s]: %s copying from temp to dest" % (tthdnum,item.name))
-                    st=time.time()
-                    if not self.prt.local:
-                        shutil.copy2(tmppath, destpath)
-                        log.debug("Thread [%s]: %s copied at %s" % (tthdnum, sz, getSpeed(szb,time.time()-st)))
-                        try:
-                            os.remove(tmppath)
-                        except OSError, e:
-                            log.warn("Failed cleaning up tmp file %s" % tmppath)
-                            pass
-                    myFile = file("%ssuccessfiles.txt" % self.prt.tmp, 'a')
-                    myFile.write("%s\n" % destpath)
-                    myFile.close()
-
-                    log.info("Thread [%s]: Finished download %s" % (tthdnum,destpath))
-            except Exception, e:
-                try:
-                    myFile = file("%serrorfiles.txt" % self.prt.tmp, 'a')
-                    myFile.write("%s%s %s\n" % (fulldest,nm,pt))
-                    myFile.close()
-                    if os.path.isfile(tmppath):
+            destpath = os.path.join(fulldest,item.name)
+            tmppath = os.path.join(fulltmp,item.name)
+            log.debug("Thread [%s]: %s" % (tthdnum, apidownloaduri))
+            log.debug("Thread [%s]: Downloading file to %s" % (tthdnum, tmppath))
+            wget.download(apidownloaduri,out=tmppath)
+            log.debug("Thread [%s]: Download finished." % tthdnum)
+            if not self.prt.end:
+                self.prt.bytestotal+=szb
+                log.debug("Thread [%s]: %s downloaded at %s" % (tthdnum, sz, getSpeed(szb,(time.time()-st))))
+                log.debug("Thread [%s]: %s copying from temp to dest" % (tthdnum,item.name))
+                st=time.time()
+                if not self.prt.local:
+                    shutil.copy2(tmppath, destpath)
+                    log.debug("Thread [%s]: %s copied at %s" % (tthdnum, sz, getSpeed(szb,time.time()-st)))
+                    try:
                         os.remove(tmppath)
-                except IOError, ioe:
-                    log.error("Error writing to error log. Quiting")
-                    self.prt.end=True
-                    return
-                try:
-                    os.remove(destpath)
-                except OSError, e:
-                    pass
-                log.error("Thread [%s]: Download failed %s\n%s" % (tthdnum,tmppath, e.strerror))
+                    except OSError, e:
+                        log.warn("Failed cleaning up tmp file %s" % tmppath)
+                        pass
+                myFile = file("%ssuccessfiles.txt" % self.prt.tmp, 'a')
+                myFile.write("%s\n" % destpath)
+                myFile.close()
+
+                log.info("Thread [%s]: Finished download %s" % (tthdnum,destpath))
 
             self.prt.numthreads-=1
 
