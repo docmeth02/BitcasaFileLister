@@ -91,8 +91,7 @@ class BitcasaDownload:
                                     timer = time.time() + 10
 
                 except Exception as e:
-                    print "Err: %s" % format_exc()
-                    log.error("Thread [%s]: error downloading %s via wget" % (tthdnum, item.name))
+                    log.error("Thread [%s]: error downloading %s: %s" % (tthdnum, item.name, % format_exc()))
                     raise
 
                 log.debug("Thread [%s]: Download finished." % tthdnum)
