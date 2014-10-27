@@ -6,7 +6,7 @@ List and download files in your Bitcasa drive
 
 This repo consists of two parts:
 Embeded is a a php application that will allow you to login via OAuth, retreive your access token, get a listing of all the files in your Bitcasa drive with their base64 encoded path, and download individual files via the Bitcasa API.
-To host this you must register and application at bitcasa and input the api secret and client id in the [config file](https://github.com/rxsegrxup/BitcasaFileLister/blob/master/bitcasa-sdk-php/config.php) and change them in [getfiles.py](https://github.com/rxsegrxup/BitcasaFileLister/blob/master/python/getfiles.py#L193).
+To host this you must register and application at bitcasa and input the api secret and client id in the [config file](https://github.com/rxsegrxup/BitcasaFileLister/blob/master/bitcasa-sdk-php/config.php) and change them in [getfiles.py](https://github.com/rxsegrxup/BitcasaFileLister/blob/master/python/getfiles.py#L204).
 
 You can access a hosted version of this at [Rose-llc.com](https://rose-llc.com/bitcasafilelist/)
 
@@ -27,18 +27,20 @@ This script is particularly useful for:
 **NOTE:** This script works best with python 2.7. It is untested with 3 and fails with 2.6.
 
 #Install
+```
+git clone https://github.com/rxsegrxup/BitcasaFileLister.git
+cd BitcasaFileLister/python
+```
+This script requires the `requests` python module which can be installed via the following command:
+
+```
+pip install requests
+```
 Check the [wiki](https://github.com/rxsegrxup/BitcasaFileLister/wiki/) for install guides.
 
 To install on windows [click here](https://github.com/rxsegrxup/BitcasaFileLister/wiki/Windows-install-instructions)
 
 #Usage
-```
-git clone https://github.com/rxsegrxup/BitcasaFileLister.git
-cd BitcasaFileLister/python
-```
-* Requires wget, requests
-* pip install wget
-* pip install requests
 ```
 getfiles.py [-h] [-t TEMP] [-l LOG] [--depth DEPTH] [-m THREADS]
                    [--local] [--norecursion] [--verbose]
@@ -122,3 +124,4 @@ As soon as a file is copied from temp to destination, it is deleted thus minimiz
 * Upload directly to cloud providers (google drive, opendrive, copy)
 * Copying lists of files instead of entire directories
 * Python Web Application instead of command line
+* Retry failed downloads
