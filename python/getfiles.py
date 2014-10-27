@@ -75,7 +75,7 @@ class BitcasaDownload:
                     lastBytesRead = bytesRead
                     timer = time.time() + 10
 
-                    req = requests.get(apidownloaduri, stream=True)
+                    req = requests.get(apidownloaduri, stream=True, timeout=120)
                     with open(tmppath, 'wb') as tmpfile:
                         for chunk in req.iter_content(chunk_size=1024):
                             if chunk: # filter out keep-alive new chunks
@@ -90,8 +90,11 @@ class BitcasaDownload:
                                     lastBytesRead = bytesRead
                                     timer = time.time() + 10
 
+                except requests.exceptions.ReadTimeout:
+                    log.error("Thread [%s]: Read Timeout reached: %s" % (tthdnum, item.name))
+                    raise
                 except Exception as e:
-                    log.error("Thread [%s]: error downloading %s: %s" % (tthdnum, item.name, % format_exc()))
+                    log.error("Thread [%s]: error downloading %s: %s" % (tthdnum, item.name, format_exc()))
                     raise
 
                 log.debug("Thread [%s]: Download finished." % tthdnum)
