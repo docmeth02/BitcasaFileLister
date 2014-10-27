@@ -91,12 +91,13 @@ class BitcasaDownload:
                                     timer = time.time() + 10
 
                 except requests.exceptions.ReadTimeout:
-                    log.error("Thread [%s]: Read Timeout reached: %s" % (tthdnum, item.name))
-                    raise
+                    raise ValueError("Read Timeout reached: %s" % item.name)
                 except Exception as e:
                     log.error("Thread [%s]: error downloading %s: %s" % (tthdnum, item.name, format_exc()))
                     raise
-
+                if bytesRead != int(item.size):
+                    raise ValueError("Download ended prematurely: %s out of %s bytes received." %\
+                                     (bytesRead, item.size))
                 log.debug("Thread [%s]: Download finished." % tthdnum)
                 if not self.prt.end:
                     self.prt.bytestotal += szb
