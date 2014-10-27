@@ -8,8 +8,6 @@ import logger
 BASE_URL = "https://developer.api.bitcasa.com/v1/files/"
 log = None
 
-def null_bar(current, total, width=80):
-    return ''
 
 def convertSize(size):
     if size <= 0:
