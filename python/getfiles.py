@@ -73,7 +73,7 @@ class BitcasaDownload:
                 try:
                     bytesRead = 0
                     lastBytesRead = bytesRead
-                    timer = time.time() + 10
+                    timer = time.time() + 60
 
                     req = requests.get(apidownloaduri, stream=True, timeout=120)
                     with open(tmppath, 'wb') as tmpfile:
@@ -85,10 +85,10 @@ class BitcasaDownload:
                                 if timer <= time.time():
                                     # log status
                                     progress = float(100 * bytesRead) / int(item.size)
-                                    bps = ((bytesRead - lastBytesRead) / 10) / 1024
-                                    log.debug("%s | %.2f%%@%s kbps" % (item.name, progress, bps))
+                                    bps = ((bytesRead - lastBytesRead) / 60)
+                                    log.debug("%s | %.2f%% @ %s/s" % (item.name, progress, convertSize(bps)))
                                     lastBytesRead = bytesRead
-                                    timer = time.time() + 10
+                                    timer = time.time() + 60
 
                 except requests.exceptions.ReadTimeout:
                     raise ValueError("Read Timeout reached: %s" % item.name)
