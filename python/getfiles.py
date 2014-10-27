@@ -151,6 +151,7 @@ class BitcasaDownload:
                     total = len(fold.items)  # first access of the item property will trigger api call
                 except (BitcasaException, ValueError) as e:
                     log.error('Bitcasa Exception: %s. Retrying' % e)
+                    time.sleep(10)  # sleep here so that we don't exhaust api rate limit too fast
                 except KeyboardInterrupt:
                     raise SystemExit
             cnti=0
@@ -237,6 +238,7 @@ class BitcasaDownload:
                 base = bitc.get_folder(self.basefolder)
             except (BitcasaException, ValueError) as e:
                 log.error("Bitcasa API Exception: %s. Retrying" % e)
+                time.sleep(10)  # sleep here so that we don't exhaust api rate limit too fast
             except KeyboardInterrupt:
                 raise SystemExit
 
